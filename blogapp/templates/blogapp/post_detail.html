@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ post.title }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        .comment-section {
+            margin-top: 40px;
+        }
+        .comment {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .comment-form {
+            margin-top: 30px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+        }
+        button {
+            padding: 8px 14px;
+            background-color: #28a745;
+            border: none;
+            color: white;
+        }
+        a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ post.title }}</h1>
+    <p><strong>Author:</strong> {{ post.author_name }}</p>
+    <p><strong>Date:</strong> {{ post.published_date }}</p>
+    <hr>
+    <p>{{ post.content }}</p>
+    <hr>
+    <p>
+        <a href="{% url 'post_list' %}">← Back to All Posts</a> |
+        <a href="{% url 'post_edit' post.pk %}">Edit Post</a>
+    </p>
+
+    <div class="comment-section">
+        <h3>💬 Comments</h3>
+        {% for comment in comments %}
+            <div class="comment">
+                <strong>{{ comment.name }}</strong> said:<br>
+                {{ comment.message }}
+            </div>
+        {% empty %}
+            <p>No comments yet. Be the first to comment!</p>
+        {% endfor %}
+
+        <div class="comment-form">
+            <h4>Add a Comment</h4>
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Post Comment</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

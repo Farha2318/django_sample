@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>All Blog Posts</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+        .search-bar {
+            margin-bottom: 20px;
+        }
+        .search-bar input[type="text"] {
+            padding: 8px;
+            width: 70%;
+            font-size: 1em;
+        }
+        .search-bar button {
+            padding: 8px 12px;
+            font-size: 1em;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+        }
+        .post {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+        .post h2 {
+            margin: 0 0 10px;
+        }
+        .post p.meta {
+            color: #666;
+            font-size: 0.9em;
+            margin: 5px 0 10px;
+        }
+        .post-actions a {
+            margin-right: 15px;
+            text-decoration: none;
+            color: #007BFF;
+        }
+        .add-post {
+            display: inline-block;
+            margin-bottom: 30px;
+            text-decoration: none;
+            color: #fff;
+            background-color: #28a745;
+            padding: 10px 15px;
+            border-radius: 5px;
+        }
+        .pagination {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .pagination a {
+            margin: 0 5px;
+            text-decoration: none;
+            color: #007BFF;
+        }
+        .pagination span {
+            margin: 0 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>All Blog Posts</h1>
+        <a class="add-post" href="{% url 'post_create' %}">+ New Post</a>
+
+        <form class="search-bar" method="get">
+            <input type="text" name="q" placeholder="Search posts..." value="{{ query|default:'' }}">
+            <button type="submit">Search</button>
+        </form>
+
+        {% for post in posts %}
+            <div class="post">
+                <h2>{{ post.title }}</h2>
+                <p class="meta">By {{ post.author_name }} on {{ post.published_date }}</p>
+                <p>{{ post.content|truncatewords:25 }}</p>
+                <div class="post-actions">
+                    <a href="{% url 'post_detail' post.pk %}">🔍 View Details</a>
+                    <a href="{% url 'post_edit' post.pk %}">✏️ Edit</a>
+                </div>
+            </div>
+        {% empty %}
+            <p>No posts yet. Start by creating one!</p>
+        {% endfor %}
+
+        <div class="pagination">
+            {% if posts.has_previous %}
+                <a href="?{% if query %}q={{ query }}&{% endif %}page={{ posts.previous_page_number }}">« Previous</a>
+            {% endif %}
+
+            <span>Page {{ posts.number }} of {{ posts.paginator.num_pages }}</span>
+
+            {% if posts.has_next %}
+                <a href="?{% if query %}q={{ query }}&{% endif %}page={{ posts.next_page_number }}">Next »</a>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

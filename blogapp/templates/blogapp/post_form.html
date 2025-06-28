@@ -2,14 +2,78 @@
 <html>
 <head>
     <title>{% if form.instance.pk %}Edit{% else %}New{% endif %} Post</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        form {
+            max-width: 600px;
+            margin: auto;
+        }
+        label {
+            font-weight: bold;
+        }
+        input[type="text"],
+        textarea,
+        input[type="file"],
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .tag-help {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 16px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            font-size: 1em;
+        }
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #007BFF;
+        }
+    </style>
 </head>
 <body>
     <h1>{% if form.instance.pk %}Edit{% else %}Create{% endif %} Post</h1>
-    <form method="POST">
+    
+    <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
+
+        <!-- File name display -->
+        <p id="filename" style="font-style: italic; color: #555;"></p>
+
         <button type="submit">Save</button>
     </form>
+
     <a href="{% url 'post_list' %}">← Cancel</a>
+
+    <script>
+        const fileInput = document.getElementById('id_image');
+        const fileNameDisplay = document.getElementById('filename');
+
+        if (fileInput) {
+            fileInput.addEventListener('change', function () {
+                if (this.files.length > 0) {
+                    fileNameDisplay.textContent = "Selected file: " + this.files[0].name;
+                } else {
+                    fileNameDisplay.textContent = "";
+                }
+            });
+        }
+    </script>
 </body>
 </html>

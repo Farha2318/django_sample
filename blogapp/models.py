@@ -1,19 +1,47 @@
 from django.db import models
 
+class Tag(models.Model):
+    """
+    Custom tag model for categorizing blog posts.
+    """
+    name = models.CharField(max_length=30, unique=True)
+
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+
 class Post(models.Model):
+    """
+    Blog post model.
+    """
     title = models.CharField(max_length=200)
     content = models.TextField()
     author_name = models.CharField(max_length=100)
     published_date = models.DateTimeField(auto_now_add=True)
+    image = models.ImageField(upload_to='post_images/', blank=True, null=True)
+    tags = models.ManyToManyField(Tag, related_name='posts', blank=True)
+
+    class Meta:
+        ordering = ['-published_date']
 
     def __str__(self):
         return self.title
 
+
 class Comment(models.Model):
+    """
+    Comment model related to a blog post.
+    """
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
     name = models.CharField(max_length=100)
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['-created_at']
+
     def __str__(self):
-        return f"Comment by {self.name}"
+        return f"Comment by {self.name} on {self.post.title}"

@@ -1,12 +1,29 @@
 from django.contrib import admin
 from django.utils.html import format_html
+from django.utils import timezone
 from .models import Post, Comment, Tag
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    list_display = ('title', 'author_name', 'published_date', 'display_tags', 'image_preview')
+    list_display = (
+        'title',
+        'author_name',
+        'published_date',
+        'status_badge',
+        'display_tags',
+        'image_preview',
+    )
     search_fields = ('title', 'content', 'author_name')
-    list_filter = ('published_date', 'tags')
+    list_filter = ('published_date', 'tags', 'is_scheduled')
+    fields = (
+        'title',
+        'content',
+        'author_name',
+        'image',
+        'tags',
+        'is_scheduled',
+        'publish_on',
+    )
 
     def display_tags(self, obj):
         """Display tags as comma-separated names in list view."""
@@ -19,6 +36,13 @@ class PostAdmin(admin.ModelAdmin):
             return format_html('<img src="{}" style="max-height: 60px;" />', obj.image.url)
         return "-"
     image_preview.short_description = 'Image'
+
+    def status_badge(self, obj):
+        """Show a badge indicating whether the post is published or scheduled."""
+        if obj.is_scheduled and obj.publish_on and obj.publish_on > timezone.now():
+            return format_html('<span style="color: orange;">Scheduled</span>')
+        return format_html('<span style="color: green;">Published</span>')
+    status_badge.short_description = 'Status'
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):

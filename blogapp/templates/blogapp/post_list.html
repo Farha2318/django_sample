@@ -98,6 +98,16 @@
         .pagination span {
             margin: 0 5px;
         }
+        .status-badge {
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .status-badge.published {
+            color: green;
+        }
+        .status-badge.scheduled {
+            color: orange;
+        }
     </style>
 </head>
 <body>
@@ -125,7 +135,14 @@
         {% for post in posts %}
             <div class="post">
                 <h2>{{ post.title }}</h2>
-                <p class="meta">By {{ post.author_name }} on {{ post.published_date }}</p>
+                <p class="meta">
+                    By {{ post.author_name }} on {{ post.published_date }}
+                    {% if post.is_scheduled and post.publish_on > now %}
+                        <span class="status-badge scheduled">[Scheduled]</span>
+                    {% else %}
+                        <span class="status-badge published">[Published]</span>
+                    {% endif %}
+                </p>
 
                 {% if post.image %}
                     <img src="{{ post.image.url }}" alt="Post image">

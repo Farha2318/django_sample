@@ -1,6 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import Q, Count
+from django.db.models.functions import TruncMonth
+from django.utils import timezone
 from .models import Post, Tag
 from .forms import PostForm, CommentForm
 
@@ -12,21 +14,22 @@ def post_list(request):
     """
     query = request.GET.get('q')
     tag_id = request.GET.get('tag')
-    posts = Post.objects.all()
+    now = timezone.now()
 
-    # Filter by search query
+    posts = Post.objects.filter(
+        Q(is_scheduled=False) | Q(is_scheduled=True, publish_on__lte=now)
+    )
+
     if query:
         posts = posts.filter(
             Q(title__icontains=query) |
             Q(content__icontains=query)
         )
 
-    # Filter by selected tag
     if tag_id:
         posts = posts.filter(tags__id=tag_id)
 
-    # Paginate the results
-    paginator = Paginator(posts.order_by('-published_date'), 5)  # 5 posts per page
+    paginator = Paginator(posts.order_by('-published_date'), 5)
     page = request.GET.get('page')
     posts = paginator.get_page(page)
 
@@ -37,6 +40,7 @@ def post_list(request):
         'query': query,
         'tags': tags,
         'selected_tag': int(tag_id) if tag_id else None,
+        'now': now,
     })
 
 
@@ -70,7 +74,7 @@ def post_create(request):
     if form.is_valid():
         post = form.save(commit=False)
         post.save()
-        form.save_m2m()  # Save tags
+        form.save_m2m()
         return redirect('post_list')
     return render(request, 'blogapp/post_form.html', {'form': form})
 
@@ -84,7 +88,7 @@ def post_edit(request, pk):
     if form.is_valid():
         post = form.save(commit=False)
         post.save()
-        form.save_m2m()  # Save updated tags
+        form.save_m2m()
         return redirect('post_detail', pk=post.pk)
     return render(request, 'blogapp/post_form.html', {'form': form})
 
@@ -98,3 +102,15 @@ def post_delete(request, pk):
         post.delete()
         return redirect('post_list')
     return render(request, 'blogapp/post_confirm_delete.html', {'post': post})
+
+
+def post_archive(request):
+    # Group posts by published month and count them
+    archives = (
+        Post.objects
+        .annotate(month=TruncMonth('published_date'))
+        .values('month')
+        .annotate(count=Count('id'))
+        .order_by('-month')
+    )
+    return render(request, 'blogapp/post_archive.html', {'archives': archives})

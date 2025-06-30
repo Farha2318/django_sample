@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 class Tag(models.Model):
     """
@@ -24,11 +25,23 @@ class Post(models.Model):
     image = models.ImageField(upload_to='post_images/', blank=True, null=True)
     tags = models.ManyToManyField(Tag, related_name='posts', blank=True)
 
+    # 🔹 New fields for scheduling
+    is_scheduled = models.BooleanField(default=False)
+    publish_on = models.DateTimeField(blank=True, null=True)
+
     class Meta:
         ordering = ['-published_date']
 
     def __str__(self):
         return self.title
+
+    def is_published(self):
+        """
+        Returns True if the post is either not scheduled or scheduled and ready to be shown.
+        """
+        if self.is_scheduled:
+            return self.publish_on and self.publish_on <= timezone.now()
+        return True
 
 
 class Comment(models.Model):

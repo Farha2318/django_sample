@@ -133,10 +133,12 @@
         {% endif %}
 
         {% for post in posts %}
+        <p style="color: green;">✅ Rendering: {{ post.title }}</p>
+
             <div class="post">
                 <h2>{{ post.title }}</h2>
                 <p class="meta">
-                    By {{ post.author_name }} on {{ post.published_date }}
+                 By {{ post.author_name }}{% if post.published_date %} on {{ post.published_date }}{% endif %}
                     {% if post.is_scheduled and post.publish_on > now %}
                         <span class="status-badge scheduled">[Scheduled]</span>
                     {% else %}

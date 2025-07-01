@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upcoming Blog Posts</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        h1 {
+            color: #333;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+        h3 {
+            margin-top: 0;
+        }
+        .meta {
+            font-size: 0.9em;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <h1>📅 Upcoming Posts</h1>
+
+    {% if upcoming %}
+        <ul>
+            {% for post in upcoming %}
+                <li>
+                    <h3>{{ post.title }}</h3>
+                    <p class="meta">
+                        <strong>Author:</strong> {{ post.author_name }}<br>
+                        <strong>Category:</strong> {{ post.category.name }}<br>
+                        <strong>Scheduled for:</strong> {{ post.publish_on|date:"M d, Y H:i" }}
+                    </p>
+                    {% if post.image %}
+                        <img src="{{ post.image.url }}" alt="{{ post.title }}" style="max-width: 100%; height: auto; margin-top: 10px;">
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No upcoming posts at the moment.</p>
+    {% endif %}
+</body>
+</html>

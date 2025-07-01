@@ -21,10 +21,10 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('blogapp.urls')),  # Routes to your blog app
+    path('', include('blogapp.urls')),  # All blog routes (homepage, posts, etc.)
 ]
 
-# Serve media files during development
+# Serve media files (images) in development
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

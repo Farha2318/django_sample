@@ -17,7 +17,8 @@
         input[type="text"],
         textarea,
         input[type="file"],
-        select {
+        select,
+        input[type="datetime-local"] {
             width: 100%;
             padding: 8px;
             margin-bottom: 15px;
@@ -51,10 +52,48 @@
     
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.as_p }}
 
-        <!-- File name display -->
-        <p id="filename" style="font-style: italic; color: #555;"></p>
+        <div class="form-group">
+            {{ form.title.label_tag }}
+            {{ form.title }}
+        </div>
+
+        <div class="form-group">
+            {{ form.content.label_tag }}
+            {{ form.content }}
+        </div>
+
+        <div class="form-group">
+            {{ form.author_name.label_tag }}
+            {{ form.author_name }}
+        </div>
+
+        <div class="form-group">
+            {{ form.image.label_tag }}
+            {{ form.image }}
+            <p id="filename" style="font-style: italic; color: #555;"></p>
+        </div>
+
+        <div class="form-group">
+            {{ form.tags.label_tag }}
+            {{ form.tags }}
+            <div class="tag-help">Hold Ctrl (or Cmd) to select multiple tags.</div>
+        </div>
+
+        <div class="form-group">
+            {{ form.category.label_tag }}
+            {{ form.category }}
+        </div>
+
+        <div class="form-group">
+            {{ form.is_scheduled.label_tag }}
+            {{ form.is_scheduled }}
+        </div>
+
+        <div class="form-group">
+            {{ form.publish_on.label_tag }}
+            {{ form.publish_on }}
+        </div>
 
         <button type="submit">Save</button>
     </form>

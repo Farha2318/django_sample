@@ -1,0 +1,83 @@
+{% extends 'blogapp/base.html' %}
+
+{% block title %}Blog Home{% endblock %}
+
+{% block content %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        h2 {
+            margin-top: 40px;
+            color: #444;
+        }
+        .post {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 6px;
+            background-color: #fafafa;
+        }
+        .post img {
+            max-width: 100%;
+            height: auto;
+            margin: 10px 0;
+            border-radius: 6px;
+        }
+        .post h3 {
+            margin-top: 0;
+        }
+        .read-more {
+            text-decoration: none;
+            color: #007BFF;
+            font-weight: bold;
+        }
+        .read-more:hover {
+            text-decoration: underline;
+        }
+    </style>
+
+    <h1>📰 Blog by Category</h1>
+
+    {% for category in categories %}
+        <section>
+            <h2>{{ category.name }}</h2>
+
+            {% with category.posts.all as posts %}
+                {% if posts %}
+                    {% for post in posts %}
+                        {% if post.is_published %}
+                            <div class="post">
+                                <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
+                                <p><strong>Author:</strong> {{ post.author_name }}</p>
+                                <p><strong>Published on:</strong> {{ post.published_date|date:"F j, Y" }}</p>
+
+                                {% if post.image %}
+                                    <img src="{{ post.image.url }}" alt="Post image">
+                                {% endif %}
+
+                                <p>{{ post.content|truncatewords:25 }}</p>
+                                <a class="read-more" href="{{ post.get_absolute_url }}">Read more →</a>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <p>No posts in this category yet.</p>
+                {% endif %}
+            {% endwith %}
+        </section>
+    {% endfor %}
+{% endblock %}
+
+<p>
+    <a href="{% url 'post_detail' post.pk %}">View</a> |
+    <a href="{% url 'post_edit' post.pk %}">Edit</a> |
+    <a href="{% url 'post_delete' post.pk %}">Delete</a>
+</p>
+
+

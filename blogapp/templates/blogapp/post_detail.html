@@ -1,14 +1,16 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>{{ post.title }}</title>
+{% extends 'blogapp/base.html' %}
+
+{% block title %}{{ post.title }} - My Blog{% endblock %}
+
+{% block content %}
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 40px;
         }
         img {
-            width: 600px;
+            width: 100%;
+            max-width: 600px;
             height: auto;
             border-radius: 10px;
             margin: 20px 0;
@@ -18,6 +20,7 @@
             background-color: #f1f1f1;
             padding: 4px 8px;
             margin-right: 6px;
+            margin-top: 6px;
             border-radius: 4px;
             text-decoration: none;
             color: #333;
@@ -28,12 +31,12 @@
             color: white;
         }
     </style>
-</head>
-<body>
+
     <h1>{{ post.title }}</h1>
 
     <p><strong>Author:</strong> {{ post.author_name }}</p>
-    <p><strong>Date:</strong> {{ post.published_date }}</p>
+    <p><strong>Date:</strong> {{ post.published_date|date:"F j, Y" }}</p>
+    <p><strong>Category:</strong> {{ post.category.name }}</p>
 
     {% if post.image %}
         <img src="{{ post.image.url }}" alt="Post image">
@@ -43,7 +46,7 @@
         <p><strong>Tags:</strong>
         {% if post.tags.all %}
             {% for tag in post.tags.all %}
-                <a href="{% url 'post_list' %}?tag={{ tag.id }}">{{ tag.name }}</a>{% if not forloop.last %}, {% endif %}
+                <a href="{% url 'post_list' %}?tag={{ tag.id }}">{{ tag.name }}</a>
             {% endfor %}
         {% else %}
             No tags
@@ -51,10 +54,7 @@
         </p>
     </div>
 
-    <hr>git remote add origin https://github.com/your-username/django-samples.git
+    <hr>
 
-
-    <p>{{ post.content }}</p>
-
-</body>
-</html>
+    <p>{{ post.content|linebreaks }}</p>
+{% endblock %}

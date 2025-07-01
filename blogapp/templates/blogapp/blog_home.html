@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Blog Home</title>
+</head>
+<body>
+    <h1>Blog by Category</h1>
+
+    {% for category in categories %}
+        <h2>{{ category.name }}</h2>
+        {% for post in category.posts.all %}
+            {% if not post.is_scheduled or (post.publish_on and post.publish_on <= now) %}
+                <div>
+                    <h3>{{ post.title }}</h3>
+                    <p>{{ post.content|truncatewords:20 }}</p>
+                    <a href="{% url 'post_detail' post.pk %}">Read more</a>
+                </div>
+            {% endif %}
+        {% empty %}
+            <p>No posts in this category.</p>
+        {% endfor %}
+    {% endfor %}
+</body>
+</html>

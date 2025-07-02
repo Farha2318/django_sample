@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'blogapp'
+    'blogapp',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -125,3 +126,21 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Media files (user-uploaded content)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+STATIC_URL = 'static/'
+
+# Media files (user-uploaded content)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# Default primary key field type
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# ✅ CELERY + REDIS CONFIGURATION
+CELERY_BROKER_URL = 'redis://localhost:6379/0'  # Redis running via Memurai
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers.DatabaseScheduler"
+
+

@@ -12,5 +12,6 @@ urlpatterns = [
     path('upcoming/', views.upcoming_posts, name='upcoming_posts'),
     path('api/latest-posts/', views.api_latest_posts, name='api_latest_posts'),
     path('api/posts-by-category/<slug:category_slug>/', views.api_posts_by_category, name='api_posts_by_category'),
+    path('latest/', views.api_latest_posts, name='latest-posts'),
 
 ]

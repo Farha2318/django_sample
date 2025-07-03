@@ -1,20 +1,29 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.http import JsonResponse
+from django.views.decorators.cache import cache_page
+from django_ratelimit.decorators import ratelimit 
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from .models import Category, Post
 from .forms import PostForm  # Assuming you have a PostForm defined
+
 
 def blog_home(request):
     categories = Category.objects.prefetch_related('posts')
     return render(request, 'blogapp/home.html', {'categories': categories})
 
+
 def post_detail(request, slug):
     post = get_object_or_404(Post, slug=slug)
     return render(request, 'blogapp/post_detail.html', {'post': post})
 
+
 def post_list(request):
     posts = Post.objects.all()
     return render(request, 'blogapp/post_list.html', {'posts': posts})
+
 
 def post_create(request):
     if request.method == 'POST':
@@ -26,9 +35,18 @@ def post_create(request):
         form = PostForm()
     return render(request, 'blogapp/post_form.html', {'form': form})
 
-def post_edit(request, pk): pass
-def post_delete(request, pk): pass
-def post_archive(request): pass
+
+def post_edit(request, pk):
+    pass
+
+
+def post_delete(request, pk):
+    pass
+
+
+def post_archive(request):
+    pass
+
 
 def upcoming_posts(request):
     upcoming = Post.objects.filter(
@@ -37,7 +55,12 @@ def upcoming_posts(request):
     ).order_by('publish_on')
     return render(request, 'blogapp/upcoming_posts.html', {'upcoming': upcoming})
 
+
 # ✅ API: Latest 5 published posts
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticatedOrReadOnly])
+@ratelimit(key='ip', rate='10/m', block=True)
 def api_latest_posts(request):
     posts = Post.objects.filter(is_scheduled=False).order_by('-published_date')[:5]
     data = [
@@ -51,7 +74,12 @@ def api_latest_posts(request):
     ]
     return JsonResponse(data, safe=False)
 
+
 # ✅ API: Posts by category
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticatedOrReadOnly])
+@ratelimit(key='ip', rate='10/m', block=True)
 def api_posts_by_category(request, category_slug):
     try:
         category = Category.objects.get(slug=category_slug)

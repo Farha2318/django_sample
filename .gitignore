@@ -18,3 +18,5 @@ venv/
 
 # Django migrations cache
 **/migrations/__pycache__/
+
+.env

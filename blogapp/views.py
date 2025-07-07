@@ -6,8 +6,18 @@ from django_ratelimit.decorators import ratelimit
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from django.contrib.admin.views.decorators import staff_member_required
+
+
 from .models import Category, Post
-from .forms import PostForm  # Assuming you have a PostForm defined
+from .forms import PostForm  
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import login_required, user_passes_test
+
+
+# ✅ Helper: allow only admin (staff) users
+def is_staff_user(user):
+    return user.is_staff
 
 
 def blog_home(request):
@@ -25,17 +35,16 @@ def post_list(request):
     return render(request, 'blogapp/post_list.html', {'posts': posts})
 
 
+@staff_member_required
 def post_create(request):
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             post = form.save()
-            return redirect(post.get_absolute_url())
+            return redirect('post_list')  # or use post.get_absolute_url() if defined
     else:
         form = PostForm()
     return render(request, 'blogapp/post_form.html', {'form': form})
-
-
 def post_edit(request, pk):
     pass
 
@@ -96,3 +105,15 @@ def api_posts_by_category(request, category_slug):
         for post in posts
     ]
     return JsonResponse(data, safe=False)
+
+
+# ✅ User registration view
+def register_user(request):
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')  # Assumes 'login' URL name exists
+    else:
+        form = UserCreationForm()
+    return render(request, "blogapp/register.html", {"form": form})

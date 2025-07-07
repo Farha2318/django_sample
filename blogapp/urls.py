@@ -3,7 +3,10 @@ from . import views
 
 urlpatterns = [
     path('', views.blog_home, name='blog_home'),
-    path('posts/', views.post_list, name='post_list'),  # Optional post list
+    path('', views.post_list, name='post_list'),  
+    path('posts/new/', views.post_create, name='post_create'),
+    path('posts/<slug:slug>/', views.post_detail, name='post_detail'),
+    path('posts/new/', views.post_create, name='post_create'),
     path('blog/<slug:slug>/', views.post_detail, name='post_detail'),
     path('post/create/', views.post_create, name='post_create'),
     path('post/<int:pk>/edit/', views.post_edit, name='post_edit'),
@@ -13,5 +16,6 @@ urlpatterns = [
     path('api/latest-posts/', views.api_latest_posts, name='api_latest_posts'),
     path('api/posts-by-category/<slug:category_slug>/', views.api_posts_by_category, name='api_posts_by_category'),
     path('latest/', views.api_latest_posts, name='latest-posts'),
+    path("register/", views.register_user, name="register"),
 
 ]

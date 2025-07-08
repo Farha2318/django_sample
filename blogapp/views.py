@@ -7,6 +7,9 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from django.contrib.admin.views.decorators import staff_member_required
+from rest_framework import generics
+from .models import Post, Comment, Category
+from .serializers import PostSerializer, CommentSerializer, CategorySerializer
 
 
 from .models import Category, Post
@@ -117,3 +120,23 @@ def register_user(request):
     else:
         form = UserCreationForm()
     return render(request, "blogapp/register.html", {"form": form})
+
+# Posts
+class PostListAPIView(generics.ListAPIView):
+    queryset = Post.objects.filter(is_scheduled=False)
+    serializer_class = PostSerializer
+
+class PostDetailAPIView(generics.RetrieveAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    lookup_field = 'slug'
+
+# Comments
+class CommentListAPIView(generics.ListAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+
+# Categories
+class CategoryListAPIView(generics.ListAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer

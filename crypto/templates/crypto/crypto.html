@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Live Crypto Prices</title>
+</head>
+<body>
+    <h2>Live Crypto Prices (BTC, ETH, DOGE)</h2>
+    <div id="prices" style="font-size: 18px;"></div>
+
+    <script>
+        const socket = new WebSocket('ws://' + window.location.host + '/ws/crypto/');
+
+        socket.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            let html = '';
+            for (const coin in data) {
+                html += `<p><strong>${coin}</strong>: $${data[coin]}</p>`;
+            }
+            document.getElementById('prices').innerHTML = html;
+        };
+
+        socket.onerror = function(e) {
+            console.log("❌ WebSocket error", e);
+        };
+
+        socket.onopen = function() {
+            console.log("✅ WebSocket connected successfully");
+        };
+    </script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 from .views import (
     PostListAPIView, PostDetailAPIView,
@@ -24,4 +24,6 @@ urlpatterns = [
     path('api/posts/<slug:slug>/', PostDetailAPIView.as_view(), name='api-post-detail'),
     path('api/comments/', CommentListAPIView.as_view(), name='api-comments'),
     path('api/categories/', CategoryListAPIView.as_view(), name='api-categories'),
+
+    path('crypto/', include('crypto.urls')), 
 ]

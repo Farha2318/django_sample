@@ -10,8 +10,6 @@ from django.contrib.admin.views.decorators import staff_member_required
 from rest_framework import generics
 from .models import Post, Comment, Category
 from .serializers import PostSerializer, CommentSerializer, CategorySerializer
-
-
 from .models import Category, Post
 from .forms import PostForm  
 from django.contrib.auth.forms import UserCreationForm
@@ -140,3 +138,5 @@ class CommentListAPIView(generics.ListAPIView):
 class CategoryListAPIView(generics.ListAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+
+
